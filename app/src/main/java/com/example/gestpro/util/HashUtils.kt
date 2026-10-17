@@ -1,5 +1,8 @@
+package com.example.gestpro.util
+
 import java.security.MessageDigest
 import java.security.SecureRandom
+
 
 object HashUtils {
     fun sha256(input: String): String =
