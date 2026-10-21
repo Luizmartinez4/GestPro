@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,7 +17,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -28,14 +28,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gestpro.ui.AppViewModelProvider
 import com.example.gestpro.ui.components.GestProTextField
+import com.example.gestpro.ui.components.PasswordRequirements
 import com.example.gestpro.ui.theme.GestGray
 import com.example.gestpro.ui.theme.GestGreen
 import com.example.gestpro.ui.theme.GestTextDark
+import com.example.gestpro.util.Limits
 
 @Composable
 fun RegisterScreen(
@@ -68,19 +71,37 @@ fun RegisterScreen(
         Spacer(Modifier.height(16.dp))
 
         Text("Email", fontSize = 20.sp, fontWeight = FontWeight.ExtraBold, color = GestTextDark)
-        GestProTextField(state.username, viewModel::onUsernameChange, "Escolha um usuário")
+        GestProTextField(
+            value = state.email,
+            onValueChange = viewModel::onEmailChange,
+            placeholder = "Digite seu email",
+            keyboardType = KeyboardType.Email,
+            maxLength = Limits.EMAIL_MAX,
+            errorMessage = state.emailError,
+            onBlur = viewModel::onEmailBlur
+        )
 
         Text("Senha", fontSize = 20.sp, fontWeight = FontWeight.ExtraBold, color = GestTextDark)
-        GestProTextField(state.password, viewModel::onPasswordChange, "Crie uma senha", isPassword = true)
+        GestProTextField(
+            value = state.password,
+            onValueChange = viewModel::onPasswordChange,
+            placeholder = "Crie uma senha",
+            isPassword = true,
+            maxLength = Limits.PASSWORD_MAX
+        )
+        if (state.showPasswordRules) {
+            PasswordRequirements(rules = state.passwordRules)
+        }
 
         Text("Confirmar senha", fontSize = 20.sp, fontWeight = FontWeight.ExtraBold, color = GestTextDark)
         GestProTextField(
-            state.confirmPassword, viewModel::onConfirmPasswordChange, "Repita a senha", isPassword = true
+            value = state.confirmPassword,
+            onValueChange = viewModel::onConfirmPasswordChange,
+            placeholder = "Repita a senha",
+            isPassword = true,
+            maxLength = Limits.PASSWORD_MAX,
+            errorMessage = state.confirmError
         )
-
-        state.errorMessage?.let {
-            Text(it, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Medium)
-        }
 
         Spacer(Modifier.height(16.dp))
 
@@ -92,7 +113,11 @@ fun RegisterScreen(
             colors = ButtonDefaults.buttonColors(containerColor = GestGreen)
         ) {
             if (state.isLoading) {
-                CircularProgressIndicator(color = Color.White, modifier = Modifier.height(24.dp))
+                CircularProgressIndicator(
+                    color = Color.White,
+                    strokeWidth = 3.dp,
+                    modifier = Modifier.size(24.dp)
+                )
             } else {
                 Text("Cadastrar", fontSize = 20.sp, fontWeight = FontWeight.ExtraBold, color = Color.White)
             }

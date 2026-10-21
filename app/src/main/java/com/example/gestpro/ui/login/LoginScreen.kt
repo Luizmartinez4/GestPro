@@ -33,20 +33,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gestpro.R
 import com.example.gestpro.ui.AppViewModelProvider
 import com.example.gestpro.ui.components.GestProTextField
+import com.example.gestpro.ui.theme.GestError
 import com.example.gestpro.ui.theme.GestGray
 import com.example.gestpro.ui.theme.GestGreen
 import com.example.gestpro.ui.theme.GestTextDark
+import com.example.gestpro.util.Limits
 
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
+    onForgotPassword: () -> Unit,
     viewModel: LoginViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -108,7 +112,9 @@ fun LoginScreen(
                     GestProTextField(
                         value = state.username,
                         onValueChange = viewModel::onUsernameChange,
-                        placeholder = "Digite seu usuário"
+                        placeholder = "Digite seu email",
+                        keyboardType = KeyboardType.Email,
+                        maxLength = Limits.EMAIL_MAX
                     )
 
                     Spacer(Modifier.height(4.dp))
@@ -118,11 +124,12 @@ fun LoginScreen(
                         value = state.password,
                         onValueChange = viewModel::onPasswordChange,
                         placeholder = "Digite a sua senha",
-                        isPassword = true
+                        isPassword = true,
+                        maxLength = Limits.PASSWORD_MAX
                     )
 
                     state.errorMessage?.let {
-                        Text(it, color = MaterialTheme.colorScheme.error, fontWeight = FontWeight.Medium)
+                        Text(it, color = GestError, fontWeight = FontWeight.Medium)
                     }
                 }
             }
@@ -148,8 +155,8 @@ fun LoginScreen(
             TextButton(onClick = onNavigateToRegister) {
                 Text("Cadastrar-se", color = GestGray, fontWeight = FontWeight.Bold)
             }
-            TextButton(onClick = { /* TODO: recuperar senha em uma próxima etapa */ }) {
-                Text("Esqueci a minha senha", color = GestGray, fontWeight = FontWeight.Bold)
+            TextButton(onClick = onForgotPassword) {
+                Text("Esqueceu a senha?", color = GestGray, fontWeight = FontWeight.Bold)
             }
         }
     }

@@ -14,7 +14,7 @@ class UserRepository(
     private val emailSender: EmailSender
 ) {
     private companion object {
-        const val RESET_LINK_BASE = "gestpro://reset"
+        const val RESET_LINK_BASE = "https://Luizmartinez4.github.io/gestpro-reset/"
         const val TOKEN_VALIDITY_MS = 30 * 60 * 1000L   // 30 minutos
     }
 
