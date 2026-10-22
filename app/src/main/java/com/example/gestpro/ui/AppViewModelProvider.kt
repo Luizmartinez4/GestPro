@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.gestpro.GestProApplication
 import com.example.gestpro.ui.forgotpassword.ForgotPasswordViewModel
+import com.example.gestpro.ui.home.HomeViewModel
 import com.example.gestpro.ui.login.LoginViewModel
 import com.example.gestpro.ui.register.RegisterViewModel
 import com.example.gestpro.ui.resetpassword.ResetPasswordViewModel
@@ -19,6 +20,7 @@ object AppViewModelProvider {
         initializer {
             ResetPasswordViewModel(createSavedStateHandle(), gestProApplication().userRepository)
         }
+        initializer { HomeViewModel(gestProApplication().farmRepository) }
     }
 }
 
