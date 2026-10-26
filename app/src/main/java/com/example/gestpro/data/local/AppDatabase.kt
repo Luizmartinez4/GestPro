@@ -13,7 +13,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         PasswordResetTokenEntity::class,
         FarmEntity::class,
         PlotEntity::class,
-        PlotInputEntity::class
+        PlotInputEntity::class,
+        EmployeeEntity::class
     ],
     version = 5,
     exportSchema = false
@@ -23,7 +24,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun passwordResetDao(): PasswordResetDao
     abstract fun farmDao(): FarmDao
-
+    abstract fun employeeDao(): EmployeeDao
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
@@ -96,6 +97,20 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    """CREATE TABLE IF NOT EXISTS employees (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    name TEXT NOT NULL, role TEXT NOT NULL, phone TEXT NOT NULL,
+                    birthDate INTEGER, contractType TEXT NOT NULL, admissionDate INTEGER,
+                    salary REAL NOT NULL, status TEXT NOT NULL, notes TEXT NOT NULL,
+                    photoPath TEXT)"""
+                )
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Room.databaseBuilder(
@@ -103,7 +118,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "gestpro.db"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                     .build()
                     .also { INSTANCE = it }
             }

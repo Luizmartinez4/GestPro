@@ -3,8 +3,10 @@ package com.example.gestpro
 import android.app.Application
 import com.example.gestpro.data.email.EmailSender
 import com.example.gestpro.data.local.AppDatabase
+import com.example.gestpro.data.repository.EmployeeRepository
 import com.example.gestpro.data.repository.FarmRepository
 import com.example.gestpro.data.repository.UserRepository
+import com.example.gestpro.ui.employees.EmployeeFilterStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,6 +23,13 @@ class GestProApplication : Application() {
     }
 
     val farmRepository: FarmRepository by lazy { FarmRepository(database) }
+
+    val employeeRepository by lazy {
+        EmployeeRepository(
+            AppDatabase.getInstance(this).employeeDao()
+        )
+    }
+    val employeeFilterStore by lazy { EmployeeFilterStore() }
 
     override fun onCreate() {
         super.onCreate()

@@ -47,6 +47,9 @@ enum class HomeTab(val label: String) {
 
 @Composable
 fun HomeScreen(
+    onNewEmployee: () -> Unit,
+    onOpenEmployee: (Long) -> Unit,
+    onOpenEmployeeFilter: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -84,6 +87,15 @@ fun HomeScreen(
                         ).show()
                     }
                 )
+
+                HomeTab.CADASTROS -> (
+                    CadastrosTab(
+                        onNewEmployee = onNewEmployee,
+                        onOpenEmployee = onOpenEmployee,
+                        onOpenEmployeeFilter = onOpenEmployeeFilter
+                    )
+                )
+
                 else -> PlaceholderTab(title = tabs[tabIndex].label)
             }
         }

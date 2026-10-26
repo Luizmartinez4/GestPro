@@ -7,6 +7,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import com.example.gestpro.ui.employees.EmployeeDetailScreen
+import com.example.gestpro.ui.employees.EmployeeFilterScreen
+import com.example.gestpro.ui.employees.EmployeeFormScreen
 import com.example.gestpro.ui.forgotpassword.ForgotPasswordScreen
 import com.example.gestpro.ui.home.HomeScreen
 import com.example.gestpro.ui.login.LoginScreen
@@ -62,6 +65,28 @@ fun AppNavigation() {
                 }
             )
         }
-        composable(Routes.HOME) { HomeScreen() }
+        composable(
+            "employee_detail/{employeeId}",
+            arguments = listOf(navArgument("employeeId") { type = NavType.LongType })
+        ) {
+            EmployeeDetailScreen(
+                onBack = { navController.popBackStack() },
+                onEdit = { id -> navController.navigate("employee_form?employeeId=$id") }
+            )
+        }
+        composable(
+            "employee_form?employeeId={employeeId}",
+            arguments = listOf(navArgument("employeeId") { type = NavType.LongType; defaultValue = 0L })
+        ) {
+            EmployeeFormScreen(onBack = { navController.popBackStack() })
+        }
+        composable("employee_filter") {
+            EmployeeFilterScreen(onBack = { navController.popBackStack() })
+        }
+        composable(Routes.HOME) { HomeScreen(
+            onNewEmployee = { navController.navigate("employee_form") },
+            onOpenEmployee = { id -> navController.navigate("employee_detail/$id") },
+            onOpenEmployeeFilter = { navController.navigate("employee_filter") }
+        ) }
     }
 }
