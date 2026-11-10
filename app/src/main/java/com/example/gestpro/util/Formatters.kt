@@ -1,12 +1,19 @@
 package com.example.gestpro.util
 
+import java.text.NumberFormat
 import java.util.Locale
 
+/** Formatação de números do app, no padrão brasileiro. */
 object Formatters {
-    /** 18.0 -> "18" | 3.5 -> "3.5" */
-    fun number(value: Double): String {
-        val rounded = Math.round(value * 10) / 10.0
-        return if (rounded % 1.0 == 0.0) rounded.toLong().toString()
-        else String.format(Locale.US, "%.1f", rounded)
-    }
+    private val ptBr = Locale("pt", "BR")
+
+    /**
+     * 18.0 -> "18" | 3.5 -> "3,5" | 1200.0 -> "1.200"
+     * [maxDecimals] limita as casas decimais (padrão: 1).
+     */
+    fun number(value: Double, maxDecimals: Int = 1): String =
+        NumberFormat.getNumberInstance(ptBr).apply {
+            minimumFractionDigits = 0
+            maximumFractionDigits = maxDecimals
+        }.format(value)
 }

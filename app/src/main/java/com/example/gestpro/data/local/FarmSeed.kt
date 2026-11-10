@@ -1,6 +1,5 @@
 package com.example.gestpro.data.local
 
-/** Dados fixos iniciais, criados na primeira execução se o banco estiver vazio. */
 object FarmSeed {
 
     private data class InputSeed(val name: String, val quantity: Double, val unit: String)
@@ -70,6 +69,10 @@ object FarmSeed {
         )
     )
 
+    const val VARIETY = "Bourbon"
+
+    private val plantCounts = listOf(3550, 1000, 2000, 3000, 1500, 2500, 2000, 1800)
+
     val farm = FarmEntity(
         id = 1,
         name = "Sítio GestPro São João",
@@ -78,7 +81,13 @@ object FarmSeed {
     )
 
     val plots: List<PlotEntity> = plotSeeds.mapIndexed { index, seed ->
-        PlotEntity(id = (index + 1).toLong(), number = index + 1, areaHa = seed.areaHa)
+        PlotEntity(
+            id = (index + 1).toLong(),
+            number = index + 1,
+            areaHa = seed.areaHa,
+            variety = VARIETY,
+            plantCount = plantCounts.getOrNull(index)
+        )
     }
 
     val inputs: List<PlotInputEntity> = plotSeeds.flatMapIndexed { index, seed ->

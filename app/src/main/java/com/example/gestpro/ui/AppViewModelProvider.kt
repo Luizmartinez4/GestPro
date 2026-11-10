@@ -16,6 +16,10 @@ import com.example.gestpro.ui.home.HomeViewModel
 import com.example.gestpro.ui.login.LoginViewModel
 import com.example.gestpro.ui.register.RegisterViewModel
 import com.example.gestpro.ui.resetpassword.ResetPasswordViewModel
+import com.example.gestpro.ui.talhoes.InputFormViewModel
+import com.example.gestpro.ui.talhoes.PlotFormViewModel
+import com.example.gestpro.ui.talhoes.PlotInputsViewModel
+import com.example.gestpro.ui.talhoes.TalhoesViewModel
 
 object AppViewModelProvider {
     val Factory = viewModelFactory {
@@ -26,6 +30,10 @@ object AppViewModelProvider {
             ResetPasswordViewModel(createSavedStateHandle(), gestProApplication().userRepository)
         }
         initializer { HomeViewModel(gestProApplication().farmRepository) }
+        initializer { TalhoesViewModel(gestProApplication().farmRepository) }
+        initializer { PlotInputsViewModel(createSavedStateHandle(), gestProApplication().farmRepository) }
+        initializer { PlotFormViewModel(createSavedStateHandle(), gestProApplication().farmRepository) }
+        initializer { InputFormViewModel(createSavedStateHandle(), gestProApplication().farmRepository) }
         initializer {
             val app = this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as GestProApplication
             EmployeeListViewModel(app.employeeRepository, app.employeeFilterStore)

@@ -5,7 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-/** Insumo aplicado em um talhão (adubo, herbicida, fungicida...). */
+/** Insumo aplicado em um talhão.*/
 @Entity(
     tableName = "plot_inputs",
     foreignKeys = [
@@ -24,5 +24,6 @@ data class PlotInputEntity(
     val name: String,
     val quantity: Double,
     val unit: String,
-    val sortOrder: Int
+    val sortOrder: Int,
+    val appliedAt: Long? = null
 )

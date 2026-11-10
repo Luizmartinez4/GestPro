@@ -16,12 +16,63 @@ class FarmRepository(private val db: AppDatabase) {
     fun observePlots(): Flow<List<PlotEntity>> = dao.observePlots()
     fun observeInputs(plotId: Long): Flow<List<PlotInputEntity>> = dao.observeInputs(plotId)
 
-    /** Cria os dados fixos, tabela por tabela, apenas se ainda não existirem. */
+    /**
+     * Cria os dados fixos só na primeira execução (banco novo, ainda sem a propriedade).
+     * Não recria talhões nem lançamentos que o usuário excluiu depois.
+     */
     suspend fun seedIfEmpty() {
         db.withTransaction {
-            if (dao.countFarm() == 0) dao.insertFarm(FarmSeed.farm)
-            if (dao.countPlots() == 0) dao.insertPlots(FarmSeed.plots)
-            if (dao.countInputs() == 0 && dao.countPlots() > 0) dao.insertInputs(FarmSeed.inputs)
+            if (dao.countFarm() == 0) {
+                dao.insertFarm(FarmSeed.farm)
+                if (dao.countPlots() == 0) {
+                    dao.insertPlots(FarmSeed.plots)
+                    dao.insertInputs(FarmSeed.inputs)
+                }
+            }
         }
     }
+
+    // ---- Talhões ----
+
+    suspend fun getPlot(id: Long): PlotEntity? = dao.getPlot(id)
+
+    fun observePlot(id: Long): Flow<PlotEntity?> = dao.observePlot(id)
+
+    /** Exclui o talhão e todos os lançamentos dele, numa única transação. */
+    suspend fun deletePlot(id: Long) = db.withTransaction {
+        dao.deleteInputsOfPlot(id)
+        dao.deletePlot(id)
+    }
+
+    suspend fun nextPlotNumber(): Int = dao.maxPlotNumber() + 1
+
+    suspend fun isPlotNumberTaken(number: Int, exceptId: Long): Boolean =
+        dao.countPlotsWithNumber(number, exceptId) > 0
+
+    /** Cria (quando id = 0) ou atualiza um talhão. Devolve o id salvo. */
+    suspend fun savePlot(plot: PlotEntity): Long = db.withTransaction {
+        if (plot.id == 0L) {
+            val newId = dao.maxPlotId() + 1
+            dao.insertPlot(plot.copy(id = newId))
+            newId
+        } else {
+            dao.updatePlot(plot)
+            plot.id
+        }
+    }
+
+    // ---- Lançamentos ----
+
+    suspend fun getInput(id: Long): PlotInputEntity? = dao.getInput(id)
+
+    suspend fun saveInput(input: PlotInputEntity): Long = db.withTransaction {
+        if (input.id == 0L) {
+            dao.insertInput(input.copy(sortOrder = dao.maxInputSortOrder(input.plotId) + 1))
+        } else {
+            dao.updateInput(input)
+            input.id
+        }
+    }
+
+    suspend fun deleteInput(id: Long) = dao.deleteInput(id)
 }

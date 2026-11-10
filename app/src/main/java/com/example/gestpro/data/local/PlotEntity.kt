@@ -8,5 +8,9 @@ import androidx.room.PrimaryKey
 data class PlotEntity(
     @PrimaryKey val id: Long,
     val number: Int,
-    val areaHa: Double
+    val areaHa: Double,
+    val variety: String? = null,
+    val plantCount: Int? = null,
+    val registeredAt: Long? = null,
+    val notes: String? = null
 )

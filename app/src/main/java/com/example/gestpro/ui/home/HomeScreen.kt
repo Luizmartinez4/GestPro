@@ -1,6 +1,5 @@
 package com.example.gestpro.ui.home
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gestpro.R
 import com.example.gestpro.ui.AppViewModelProvider
+import com.example.gestpro.ui.talhoes.TalhoesTab
 import com.example.gestpro.ui.theme.GestBarGreen
 import com.example.gestpro.ui.theme.GestMuted
 import com.example.gestpro.ui.theme.GestOverlay
@@ -50,10 +49,11 @@ fun HomeScreen(
     onNewEmployee: () -> Unit,
     onOpenEmployee: (Long) -> Unit,
     onOpenEmployeeFilter: () -> Unit,
+    onOpenPlot: (Long) -> Unit,
+    onNewPlot: () -> Unit,
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val state by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     var tabIndex by rememberSaveable { mutableIntStateOf(0) }
     val tabs = HomeTab.entries
 
@@ -79,13 +79,8 @@ fun HomeScreen(
                 HomeTab.INICIO -> InicioTab(
                     state = state,
                     onPlotClick = viewModel::onPlotSelected,
-                    onHistoryClick = {
-                        Toast.makeText(
-                            context,
-                            "O histórico do talhão ainda será implementado",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+                    // Abre a tela de lançamentos do talhão selecionado (rota talhao/{id})
+                    onHistoryClick = { onOpenPlot(state.selectedPlotId) }
                 )
 
                 HomeTab.CADASTROS -> (
@@ -96,7 +91,7 @@ fun HomeScreen(
                     )
                 )
 
-                else -> PlaceholderTab(title = tabs[tabIndex].label)
+                HomeTab.TALHOES -> TalhoesTab(onOpenPlot = onOpenPlot, onNewPlot = onNewPlot)
             }
         }
     }

@@ -16,7 +16,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         PlotInputEntity::class,
         EmployeeEntity::class
     ],
-    version = 5,
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -111,6 +111,23 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE plots ADD COLUMN variety TEXT")
+                db.execSQL("ALTER TABLE plots ADD COLUMN plantCount INTEGER")
+                db.execSQL("ALTER TABLE plots ADD COLUMN registeredAt INTEGER")
+                db.execSQL("ALTER TABLE plots ADD COLUMN notes TEXT")
+                db.execSQL("ALTER TABLE plot_inputs ADD COLUMN appliedAt INTEGER")
+                db.execSQL("UPDATE plots SET variety = 'Bourbon' WHERE id BETWEEN 1 AND 8")
+                db.execSQL(
+                    "UPDATE plots SET plantCount = CASE id " +
+                        "WHEN 1 THEN 3550 WHEN 2 THEN 1000 WHEN 3 THEN 2000 WHEN 4 THEN 3000 " +
+                        "WHEN 5 THEN 1500 WHEN 6 THEN 2500 WHEN 7 THEN 2000 WHEN 8 THEN 1800 " +
+                        "END WHERE id BETWEEN 1 AND 8"
+                )
+            }
+        }
+
         fun getInstance(context: Context): AppDatabase =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: Room.databaseBuilder(
@@ -118,7 +135,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "gestpro.db"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                     .build()
                     .also { INSTANCE = it }
             }
