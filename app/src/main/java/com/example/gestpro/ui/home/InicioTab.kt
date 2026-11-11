@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -48,14 +49,13 @@ fun InicioTab(
     onPlotClick: (Long) -> Unit,
     onHistoryClick: () -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .navigationBarsPadding()
-    ) {
+    Column(Modifier.fillMaxSize()) {
+        // Totais e grade: ocupam o espaço que sobra e rolam se não couberem
         Column(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             SectionLabel("Totalizadores")
@@ -85,6 +85,7 @@ fun InicioTab(
             }
         }
 
+        // Fixo no rodapé: sempre visível, sem depender da rolagem
         SelectedPanel(state, onHistoryClick)
     }
 }
@@ -192,6 +193,7 @@ private fun SelectedPanel(state: HomeUiState, onHistoryClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .background(GestPanel)
+            .navigationBarsPadding()
             .padding(horizontal = 16.dp, vertical = 14.dp)
     ) {
         Text("Selecionado", color = GestMuted, fontSize = 11.sp, fontWeight = FontWeight.Medium)
@@ -210,13 +212,15 @@ private fun SelectedPanel(state: HomeUiState, onHistoryClick: () -> Unit) {
                 fontWeight = FontWeight.Medium
             )
         } else {
-            state.selectedInputs.forEach { input ->
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(input.name, color = GestMuted, fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                    Text(input.amount, color = GestMuted, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Column(Modifier.heightIn(max = 130.dp).verticalScroll(rememberScrollState())) {
+                state.selectedInputs.forEach { input ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(input.name, color = GestMuted, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Text(input.amount, color = GestMuted, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    }
                 }
             }
         }
