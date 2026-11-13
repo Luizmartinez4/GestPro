@@ -80,6 +80,13 @@ fun InicioTab(
                         modifier = Modifier.size(24.dp)
                     )
                 }
+            } else if (state.plots.isEmpty()){
+                Text(
+                    "Nenhum talhão cadastrado ainda.",
+                    color = GestMuted,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
             } else {
                 PlotGrid(state.plots, state.selectedPlotId, onPlotClick)
             }
