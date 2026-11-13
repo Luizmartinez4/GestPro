@@ -21,15 +21,7 @@ class FarmRepository(private val db: AppDatabase) {
      * Não recria talhões nem lançamentos que o usuário excluiu depois.
      */
     suspend fun seedIfEmpty() {
-        db.withTransaction {
-            if (dao.countFarm() == 0) {
-                dao.insertFarm(FarmSeed.farm)
-                if (dao.countPlots() == 0) {
-                    dao.insertPlots(FarmSeed.plots)
-                    dao.insertInputs(FarmSeed.inputs)
-                }
-            }
-        }
+        if (dao.countFarm() == 0) dao.insertFarm(FarmSeed.farm)
     }
 
     // ---- Talhões ----

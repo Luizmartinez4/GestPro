@@ -22,20 +22,8 @@ interface FarmDao {
     @Query("SELECT COUNT(*) FROM farm")
     suspend fun countFarm(): Int
 
-    @Query("SELECT COUNT(*) FROM plots")
-    suspend fun countPlots(): Int
-
-    @Query("SELECT COUNT(*) FROM plot_inputs")
-    suspend fun countInputs(): Int
-
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFarm(farm: FarmEntity)
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertPlots(plots: List<PlotEntity>)
-
-    @Insert
-    suspend fun insertInputs(inputs: List<PlotInputEntity>)
 
     // ---- Talhões ----
 
